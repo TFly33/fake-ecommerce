@@ -56,7 +56,25 @@ function start() {
         ]).then(function (answers) {
             var userInput = answers.buyWhat;
 
-            console.log("here's what the user selected: " + userInput)
+            console.log("here's what the user selected: " + userInput);
+            connection.query("SELECT * FROM products WHERE ?",
+            {
+                item_id: userInput
+            },
+            function (err, res) {
+                if (err) throw err;
+                // console.log(res);
+                for (i = 0; i < res.length; i++) {
+                    console.log(
+                        "item: " + res[i].item_id + "\n" +
+                        "product name: " + res[i].product_name + "\n" +
+                        "department: " + res[i].department_name + "\n" +
+                        "price: " + res[i].price + "\n" +
+                        "stock_quantity: " + res[i].stock_quantity + "\n" 
+                    )
+                }
+
+            });
             units();
 
         });
@@ -64,6 +82,8 @@ function start() {
 }
 
 function units() {
+
+    
     inquirer.prompt([
         {
             type: "input",
@@ -84,7 +104,7 @@ function units() {
                 inquirer.prompt([
                     {
                         type: "input",
-                        message: "Sorry. We don't have that many to sell.  How many cards would you like to buy?",
+                        message: "Sorry. We don't have that many to sell.  How many cards would you actually like to buy?",
                         name: "buyWhat"
                     }
                 ]).then(function (answers) {
