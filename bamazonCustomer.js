@@ -1,19 +1,19 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var Table = require('cli-table');
- 
-// instantiate. Come back to this table. 
+// var Table = require('cli-table3');
+
+// // instantiate. Come back to this table. 
 // var table = new Table({
 //     head: ['TH 1 label', 'TH 2 label']
 //   , colWidths: [100, 200]
 // });
- 
+
 // // table is an Array, so you can `push`, `unshift`, `splice` and friends
 // table.push(
 //     ['First value', 'Second value']
 //   , ['First value', 'Second value']
 // );
- 
+
 // console.log(table.toString());
 
 var connection = mysql.createConnection({
@@ -37,13 +37,68 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
     start();
-    
+
 });
 
-    function start() {
-        connection.query("SELECT * FROM products", function(err, res) {
-          if (err) throw err;
-          console.log(res);
-          connection.end();
+function start() {
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+        //   Console logging the tabl here. 
+        console.log(res);
+
+        // here's my inquirer. 
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is the id of the product you would like to buy?",
+                name: "buyWhat"
+            }
+        ]).then(function (answers) {
+            var userInput = answers.buyWhat;
+
+            console.log("here's what the user selected: " + userInput)
+            units();
+
         });
-      }
+    });
+}
+
+function units() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "How many cards would you like to purchase?",
+            name: "unitNumber"
+        }
+    ]).then(function (answers) {
+        var userInput = answers.unitNumber;
+        console.log("here's how many you ordered: " + userInput)
+        if (userInput > 10) {
+
+            connection.query("SELECT * FROM products", function (err, res) {
+                if (err) throw err;
+                //   Console logging the table here. 
+                console.log(res);
+
+                // here's my inquirer. 
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        message: "Sorry. We don't have that many to sell.  How many cards would you like to buy?",
+                        name: "buyWhat"
+                    }
+                ]).then(function (answers) {
+                    var userInput = answers.buyWhat;
+
+                    console.log("here's what the user selected: " + userInput)
+                    connection.end();
+                });
+            });
+        };
+    });
+    
+}
+
+
+
+
