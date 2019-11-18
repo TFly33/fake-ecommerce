@@ -31,8 +31,6 @@ var connection = mysql.createConnection({
 });
 
 
-// PUT SWITCH HERE. 
-
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
@@ -40,13 +38,22 @@ connection.connect(function (err) {
 
 });
 
+
 function start() {
+    // showing the full inventory 
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
-        //   Console logging the tabl here. 
-        console.log(res);
-
-        // here's my inquirer. 
+        //   Console logging the table here. 
+        for (i = 0; i < res.length; i++) {
+            // creating this variable so we can use it to compare to the user input later. 
+            var inventory = res.length;
+            console.log("\n" +
+                "item: " + res[i].item_id + "\n" +
+                "product name: " + res[i].product_name + "\n" +
+                "department: " + res[i].department_name + "\n" +
+                "price: " + res[i].price + "\n" +
+                "stock_quantity: " + res[i].stock_quantity + "\n");
+        }
         inquirer.prompt([
             {
                 type: "input",
@@ -55,69 +62,129 @@ function start() {
             }
         ]).then(function (answers) {
             var userInput = answers.buyWhat;
-
             console.log("here's what the user selected: " + userInput);
-            connection.query("SELECT * FROM products WHERE ?",
-            {
-                item_id: userInput
-            },
-            function (err, res) {
-                if (err) throw err;
-                // console.log(res);
-                for (i = 0; i < res.length; i++) {
-                    console.log(
-                        "item: " + res[i].item_id + "\n" +
-                        "product name: " + res[i].product_name + "\n" +
-                        "department: " + res[i].department_name + "\n" +
-                        "price: " + res[i].price + "\n" +
-                        "stock_quantity: " + res[i].stock_quantity + "\n" 
-                    )
-                }
+            // If the userInput ID is larger than the length, it means it doesn't match an ID. Easy way of solving that problem. 
+            if (userInput > inventory) {
+                console.log(
+                    "That doesn't match any id! We can only sell you what we have!"
+                );
+                // We'll just restart everything if they give a fake id. 
+                start();
+            }
+            else {
+                connection.query("SELECT * FROM products WHERE ?",
+                    {
+                        item_id: userInput
+                    },
+                    function (err, res) {
+                        if (err) throw err;
+                        // console.log(res);
+                        for (i = 0; i < res.length; i++) {
+                            console.log(
+                                "\n" +
+                                "item: " + res[i].item_id + "\n" +
+                                "product name: " + res[i].product_name + "\n" +
+                                "department: " + res[i].department_name + "\n" +
+                                "price: " + res[i].price + "\n" +
+                                "stock_quantity: " + res[i].stock_quantity + "\n"
+                            );
+                            var stock = res[i].stock_quantity;
+                        }
+                        units(); 
+                        function units() {
+                            inquirer.prompt([
+                                {
+                                    type: "input",
+                                    message: "How many cards would you like to purchase?",
+                                    name: "unitNumber"
+                                }
+                            ]).then(function (answers) {
+                                var stockNumber = answers.unitNumber;
+                                if (stockNumber > stock) {
+                                    console.log("We don't have that many to sell!");
+                                    units();
+                                }
+                                else {
+                                    console.log("ok, working on that.")
+                                }
 
-            });
-            units();
+                            });
+
+                        }
+
+                    });
+
+            }
 
         });
     });
 }
 
-function units() {
+// function units() {
 
-    
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "How many cards would you like to purchase?",
-            name: "unitNumber"
-        }
-    ]).then(function (answers) {
-        var userInput = answers.unitNumber;
-        console.log("here's how many you ordered: " + userInput)
-        if (userInput > 10) {
+//     inquirer.prompt([
+//         {
+//             type: "input",
+//             message: "How many cards would you like to purchase?",
+//             name: "unitNumber"
+//         }
+//     ]).then(function (answers) {
+//         var userInput = answers.unitNumber;
+//         console.log("here's how many you ordered: " + userInput)
 
-            connection.query("SELECT * FROM products", function (err, res) {
-                if (err) throw err;
-                //   Console logging the table here. 
-                console.log(res);
+//         if (userInput > res[i].stock_quantity) {
 
-                // here's my inquirer. 
-                inquirer.prompt([
-                    {
-                        type: "input",
-                        message: "Sorry. We don't have that many to sell.  How many cards would you actually like to buy?",
-                        name: "buyWhat"
-                    }
-                ]).then(function (answers) {
-                    var userInput = answers.buyWhat;
+//             connection.query("SELECT * FROM products", function (err, res) {
+//                 if (err) throw err;
+//                 //   Console logging the table here. 
+//                 console.log(
+//                     "\n" + "item: " + res[i].item_id + "\n" +
+//                     "product name: " + res[i].product_name + "\n" +
+//                     "department: " + res[i].department_name + "\n" +
+//                     "price: " + res[i].price + "\n" +
+//                     "stock_quantity: " + res[i].stock_quantity + "\n"
+//                 )
 
-                    console.log("here's what the user selected: " + userInput)
-                    connection.end();
-                });
-            });
-        };
-    });
-    
-}
+
+//                 inquirer.prompt([
+//                     {
+//                         type: "input",
+//                         message: "Sorry. We don't have that many to sell.  How many cards would you actually like to buy?",
+//                         name: "buyWhat"
+//                     }
+//                 ]).then(function (answers) {
+//                     var userInput = answers.buyWhat;
+//                     var userInput = answers.buyWhat;
+
+//                     console.log("Your ID number is: " + userInput);
+//                     connection.query("SELECT * FROM products WHERE ?",
+//                         {
+//                             item_id: userInput
+//                         },
+//                         function (err, res) {
+//                             if (err) throw err;
+//                             // console.log(res);
+//                             for (i = 0; i < res.length; i++) {
+//                                 console.log(
+//                                     "\n" +
+//                                     "item: " + res[i].item_id + "\n" +
+//                                     "product name: " + res[i].product_name + "\n" +
+//                                     "department: " + res[i].department_name + "\n" +
+//                                     "price: " + res[i].price + "\n" +
+//                                     "stock_quantity: " + res[i].stock_quantity + "\n"
+//                                 )
+//                             }
+
+//                         });
+
+//                     console.log("here's what the user selected: " + userInput)
+//                     connection.end();
+//                 });
+//             });
+//         };
+//     });
+
+// }
 
 
 
