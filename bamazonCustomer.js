@@ -2,20 +2,6 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table3');
 
-// instantiate. Come back to this table. 
-// var table = new Table({
-//     head: ['Item ID', "Product Name", "Category", "Price", "Stock"]
-//     , colWidths: [20, 25]
-// });
-
-// // table is an Array, so you can `push`, `unshift`, `splice` and friends
-// table.push(
-//     ['First value', 'Second value']
-//     , ['First value', 'Second value']
-// );
-
-// console.log(table.toString());
-
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -60,12 +46,6 @@ function start() {
                 res[i].stock_quantity
             ];
             table.push(array);
-            // console.log("\n" +
-            //     "item: " + res[i].item_id + "\n" +
-            //     "product name: " + res[i].product_name + "\n" +
-            //     "department: " + res[i].department_name + "\n" +
-            //     "price: " + res[i].price + "\n" +
-            //     "stock_quantity: " + res[i].stock_quantity + "\n");
         }
         console.log(table.toString());
         inquirer.prompt([
