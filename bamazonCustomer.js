@@ -89,6 +89,7 @@ function start() {
                                 "stock_quantity: " + res[i].stock_quantity + "\n"
                             );
                             var stock = res[i].stock_quantity;
+                            var price = res[i].price;
                         }
                         units();
                         function units() {
@@ -109,6 +110,7 @@ function start() {
                                     editCount();
                                     function editCount() {
                                         var newStock = stock - stockNumber;
+                                        var paid = stockNumber * price;
                                         connection.query("UPDATE products SET ? WHERE ?",
                                             [
                                                 {
@@ -122,7 +124,13 @@ function start() {
                                             function (err, res) {
                                                 if (err) throw err;
                                                 console.log("now we only have " + newStock + " cards left!");
-
+                                                console.log("you paid $" + paid + ". thanks for shopping!");
+                                                connection.query("SELECT * FROM products", function(err, res) {
+                                                    if (err) throw err;
+                                                    console.log(res);
+                                                    connection.end();
+                                                  });
+                                                
                                             }
 
                                         )
@@ -136,78 +144,13 @@ function start() {
                     }
                 );
 
-
             }
 
         });
     });
 }
 
-// function units() {
 
-//     inquirer.prompt([
-//         {
-//             type: "input",
-//             message: "How many cards would you like to purchase?",
-//             name: "unitNumber"
-//         }
-//     ]).then(function (answers) {
-//         var userInput = answers.unitNumber;
-//         console.log("here's how many you ordered: " + userInput)
-
-//         if (userInput > res[i].stock_quantity) {
-
-//             connection.query("SELECT * FROM products", function (err, res) {
-//                 if (err) throw err;
-//                 //   Console logging the table here. 
-//                 console.log(
-//                     "\n" + "item: " + res[i].item_id + "\n" +
-//                     "product name: " + res[i].product_name + "\n" +
-//                     "department: " + res[i].department_name + "\n" +
-//                     "price: " + res[i].price + "\n" +
-//                     "stock_quantity: " + res[i].stock_quantity + "\n"
-//                 )
-
-
-//                 inquirer.prompt([
-//                     {
-//                         type: "input",
-//                         message: "Sorry. We don't have that many to sell.  How many cards would you actually like to buy?",
-//                         name: "buyWhat"
-//                     }
-//                 ]).then(function (answers) {
-//                     var userInput = answers.buyWhat;
-//                     var userInput = answers.buyWhat;
-
-//                     console.log("Your ID number is: " + userInput);
-//                     connection.query("SELECT * FROM products WHERE ?",
-//                         {
-//                             item_id: userInput
-//                         },
-//                         function (err, res) {
-//                             if (err) throw err;
-//                             // console.log(res);
-//                             for (i = 0; i < res.length; i++) {
-//                                 console.log(
-//                                     "\n" +
-//                                     "item: " + res[i].item_id + "\n" +
-//                                     "product name: " + res[i].product_name + "\n" +
-//                                     "department: " + res[i].department_name + "\n" +
-//                                     "price: " + res[i].price + "\n" +
-//                                     "stock_quantity: " + res[i].stock_quantity + "\n"
-//                                 )
-//                             }
-
-//                         });
-
-//                     console.log("here's what the user selected: " + userInput)
-//                     connection.end();
-//                 });
-//             });
-//         };
-//     });
-
-// }
 
 
 
