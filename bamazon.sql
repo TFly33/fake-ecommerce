@@ -14,9 +14,9 @@ product_name VARCHAR(100) NOT NULL,
   -- Create an integer column called "rating" --
 department_name VARCHAR(100) NOT NULL,
   -- Create an integer column called "rating" --
-price DECIMAL (10,5) NOT NULL,
+price DECIMAL (10) NOT NULL,
 
-stock_quantity DECIMAL (10,5) NOT NULL,
+stock_quantity DECIMAL (10) NOT NULL,
 
   -- Set the id as this table's primary key
   PRIMARY KEY (item_id)
@@ -27,7 +27,7 @@ INSERT INTO products (product_name,department_name,price,stock_quantity)
 VALUES ("Rickey Henderson","modern", 50, 7), 
 ("Ken Griffey Jr.","modern", 100, 6), 
 ("Mickey Mantle","classic", 200, 3),
-("Babe Rush","antique", 500, 2),
+("Babe Ruth","antique", 500, 2),
 ("Honus Wagner","antique", 10000, 1),
 ("Greg Maddux","modern", 200, 82), 
 ("Jay Buhner","modern", 30, 250), 

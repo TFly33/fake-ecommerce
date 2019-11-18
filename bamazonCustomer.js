@@ -90,7 +90,7 @@ function start() {
                             );
                             var stock = res[i].stock_quantity;
                         }
-                        units(); 
+                        units();
                         function units() {
                             inquirer.prompt([
                                 {
@@ -105,14 +105,37 @@ function start() {
                                     units();
                                 }
                                 else {
-                                    console.log("ok, working on that.")
-                                }
+                                    console.log("You bought " + stockNumber + " cards!");
+                                    editCount();
+                                    function editCount() {
+                                        var newStock = stock - stockNumber;
+                                        connection.query("UPDATE products SET ? WHERE ?",
+                                            [
+                                                {
+                                                    stock_quantity: stock
+                                                },
+                                                {
+                                                    stock_quantity: newStock
+                                                }
+
+                                            ],
+                                            function (err, res) {
+                                                if (err) throw err;
+                                                console.log("now we only have " + newStock + " cards left!");
+
+                                            }
+
+                                        )
+                                    };
+                                };
 
                             });
 
                         }
 
-                    });
+                    }
+                );
+
 
             }
 
