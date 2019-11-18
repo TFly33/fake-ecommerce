@@ -92,20 +92,24 @@ function start() {
                     },
                     function (err, res) {
                         if (err) throw err;
+                        var table2 = new Table({
+                            head: ['Item ID', "Product Name", "Category", "Price", "Stock"]
+                        });
                         // console.log(res);
                         for (i = 0; i < res.length; i++) {
-                            console.log(
-                                "\n" +
-                                "item: " + res[i].item_id + "\n" +
-                                "product name: " + res[i].product_name + "\n" +
-                                "department: " + res[i].department_name + "\n" +
-                                "price: " + res[i].price + "\n" +
-                                "stock_quantity: " + res[i].stock_quantity + "\n"
-                            );
+                            var array2 = [
+                                res[i].item_id,
+                                res[i].product_name,
+                                res[i].department_name,
+                                res[i].price,
+                                res[i].stock_quantity
+                            ];
+                            table2.push(array2);
                             var stock = res[i].stock_quantity;
                             var price = res[i].price;
                             var itemID = res[i].item_id;
-                        }
+                        };
+                        console.log(table2.toString());
                         units();
                         function units() {
                             inquirer.prompt([
@@ -138,10 +142,31 @@ function start() {
                                             ],
                                             function (err, res) {
                                                 if (err) throw err;
-                                                console.log("now we only have " + newStock + " cards left!");
-                                                console.log("you paid $" + paid + ". Thanks for shopping!");
-                                                // BEYOND THIS POINT IS NOT WORKING PROPERLY BECAUSE THE TABLE ISN'T UPDATING. 
-                                               start();
+                                                console.log("-----------------------")
+                                                console.log("Now we only have " + newStock + " cards left!");
+                                                console.log("-----------------------")
+                                                console.log("You paid $" + paid + ". Thanks for shopping!");
+                                                console.log("-----------------------")
+                                                
+                                                inquirer.prompt([
+                                                    {
+                                                        type: "list",
+                                                        message: "Want to keep shopping or call it a day?",
+                                                        choices: ["Keep shopping!", "Quit. I'm tired of your store."],
+                                                        name: "shopOrQuit"
+                                                    }
+                                                ]).then(function (answer) {
+                                                    if (answer.shopOrQuit === "Keep shopping!") {
+                                                        start();
+                                                    }
+                                                    if (answer.shopOrQuit === "Quit. I'm tired of your store.") {
+                                                    
+                                                        console.log("Alright, thanks for stopping by!")
+                                                        connection.end();
+                                                    }
+
+                                                });
+
                                             }
 
                                         )
