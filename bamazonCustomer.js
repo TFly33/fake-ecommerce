@@ -1,17 +1,17 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-// var Table = require('cli-table3');
+var Table = require('cli-table3');
 
-// // instantiate. Come back to this table. 
+// instantiate. Come back to this table. 
 // var table = new Table({
-//     head: ['TH 1 label', 'TH 2 label']
-//   , colWidths: [100, 200]
+//     head: ['Item ID', "Product Name", "Category", "Price", "Stock"]
+//     , colWidths: [20, 25]
 // });
 
 // // table is an Array, so you can `push`, `unshift`, `splice` and friends
 // table.push(
 //     ['First value', 'Second value']
-//   , ['First value', 'Second value']
+//     , ['First value', 'Second value']
 // );
 
 // console.log(table.toString());
@@ -43,17 +43,31 @@ function start() {
     // showing the full inventory 
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
+        // instantiate. Come back to this table. 
+        var table = new Table({
+            head: ['Item ID', "Product Name", "Category", "Price", "Stock"]
+        });
+
+        var inventory = res.length;
         //   Console logging the table here. 
         for (i = 0; i < res.length; i++) {
             // creating this variable so we can use it to compare to the user input later. 
-            var inventory = res.length;
-            console.log("\n" +
-                "item: " + res[i].item_id + "\n" +
-                "product name: " + res[i].product_name + "\n" +
-                "department: " + res[i].department_name + "\n" +
-                "price: " + res[i].price + "\n" +
-                "stock_quantity: " + res[i].stock_quantity + "\n");
+            var array = [
+                res[i].item_id,
+                res[i].product_name,
+                res[i].department_name,
+                res[i].price,
+                res[i].stock_quantity
+            ];
+            table.push(array);
+            // console.log("\n" +
+            //     "item: " + res[i].item_id + "\n" +
+            //     "product name: " + res[i].product_name + "\n" +
+            //     "department: " + res[i].department_name + "\n" +
+            //     "price: " + res[i].price + "\n" +
+            //     "stock_quantity: " + res[i].stock_quantity + "\n");
         }
+        console.log(table.toString());
         inquirer.prompt([
             {
                 type: "input",
@@ -90,13 +104,14 @@ function start() {
                             );
                             var stock = res[i].stock_quantity;
                             var price = res[i].price;
+                            var itemID = res[i].item_id;
                         }
                         units();
                         function units() {
                             inquirer.prompt([
                                 {
                                     type: "input",
-                                    message: "How many cards would you like to purchase?",
+                                    message: "How many cards would you like to purchase? We have " + stock + " total. " + "They're $" + price + " each.",
                                     name: "unitNumber"
                                 }
                             ]).then(function (answers) {
@@ -114,23 +129,19 @@ function start() {
                                         connection.query("UPDATE products SET ? WHERE ?",
                                             [
                                                 {
-                                                    stock_quantity: stock
+                                                    stock_quantity: newStock
                                                 },
                                                 {
-                                                    stock_quantity: newStock
+                                                    item_id: itemID
                                                 }
 
                                             ],
                                             function (err, res) {
                                                 if (err) throw err;
                                                 console.log("now we only have " + newStock + " cards left!");
-                                                console.log("you paid $" + paid + ". thanks for shopping!");
-                                                connection.query("SELECT * FROM products", function(err, res) {
-                                                    if (err) throw err;
-                                                    console.log(res);
-                                                    connection.end();
-                                                  });
-                                                
+                                                console.log("you paid $" + paid + ". Thanks for shopping!");
+                                                // BEYOND THIS POINT IS NOT WORKING PROPERLY BECAUSE THE TABLE ISN'T UPDATING. 
+                                               start();
                                             }
 
                                         )
