@@ -163,7 +163,7 @@ function add() {
                 type: "input"
             },
             {
-                message: "How many total cards do we have now?",
+                message: "How many cards do we have in stock now?",
                 name: "add",
                 type: "input"
             }
