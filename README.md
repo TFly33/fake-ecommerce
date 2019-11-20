@@ -1,7 +1,7 @@
 # fake-ecommerce
 
 I have a video explanation of the app. It is available here: 
-https://youtu.be/O_AKybgQq-U
+https://youtu.be/PHNyw9VP74w
 
 1. Purpose.
 

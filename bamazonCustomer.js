@@ -1,6 +1,8 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require('cli-table3');
+require("dotenv").config();
+
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -12,10 +14,9 @@ var connection = mysql.createConnection({
     user: "root",
 
     // Your password
-    password: "Voltaire279G",
+    password: process.env.MY_SQL_PASS,
     database: "bamazon_db"
 });
-
 
 connection.connect(function (err) {
     if (err) throw err;
