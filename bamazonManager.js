@@ -30,7 +30,7 @@ function intro() {
         {
             type: "list",
             message: "Mr. Manager, what would you like to do?",
-            choices: ["View Products For Sale", "View Low Invetory", "Add to Inventory", "Add New Product"],
+            choices: ["View Products For Sale", "View Low Inventory", "Add to Inventory", "Add New Product"],
             name: "managerChoice"
         }
     ]).then(function (answers) {
@@ -39,7 +39,7 @@ function intro() {
             console.log("Running view")
             view();
         }
-        if (answers.managerChoice === "View Low Invetory") {
+        if (answers.managerChoice === "View Low Inventory") {
             console.log("Running View Low Inventory")
             low();
         }
@@ -155,7 +155,6 @@ function add() {
             table.push(array);
         }
         console.log(table.toString());
-        console.log("Here's what we have now.");
         inquirer.prompt([
             {
                 message: "Adding to which product name?",
@@ -168,23 +167,21 @@ function add() {
                 type: "input"
             }
         ]).then(function (answers) {
-            console.log("Thank's for adding a new Product. here are the details: ");
             console.log(answers.add);
             console.log(answers.productName);
             var quantity = parseInt(answers.add);
             var product = answers.productName;
             // Now need to insert the new variable. 
-            connection.query(
-                "UPDATE products SET ? WHERE ?",
+            connection.query("UPDATE products SET ? WHERE ?",
+            [
                 // WHY ISN'T THIS WORKING? 
-                [
-                    {
-                        stock_quantity: quantity
-                    },
-                    {
-                        product_name: product
-                    },
-                ],
+                {
+                    stock_quantity: quantity
+                },
+                {
+                    product_name: product
+                },
+            ],
                 function (err, res) {
                     if (err) throw err;
                     console.log("-----------------------")
@@ -227,7 +224,7 @@ function add() {
                     });
 
                 }
-                // end of start function. 
+              
             );
         });
     });
